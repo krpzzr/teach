@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f1ea;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        text-align: center;
+        width: 450px;
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+
+      label {
+        display: block;
+        text-align: left;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 10px 15px;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 12px;
+        text-align: right;
+        margin-top: 5px;
+        align-self: center;
+      }
+
+      form > div {
+        display: flex;
+        justify-content: space-between;
+      }
+  </style>
+  <title>Registration</title>
+</head>
+<body>
+    <div class="container">
+      <h2>Registration</h2>
+      <form id="registrationForm">
+        <div>
+          <label for="email">Email:</label>
+          <div id="emailError" class="error-message"></div>
+        </div>
+        <input type="email" id="email" name="email" required>
+
+        <div>
+          <label for="password">Password:</label>
+          <div id="passwordError" class="error-message"></div>
+        </div>
+        <input type="password" id="password" name="password" required>
+
+        <div>
+          <label for="repeatPassword">Repeat:</label>
+          <div id="repeatPasswordError" class="error-message"></div>
+        </div>
+        <input type="password" id="repeatPassword" name="repeatPassword" required>
+
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+
+  <script>
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    document.getElementById('registrationForm').addEventListener('submit', validateForm);
+
+    function validateForm(e) {
+      e.preventDefault();
+
+      const email =  document.getElementById('email').value;
+      const password =  document.getElementById('password').value;
+      const repeatPassword =  document.getElementById('repeatPassword').value;
+
+      const isEmailValid = emailRegex.test(email);
+      displayError('emailError', isEmailValid, 'Wrong email address');
+
+      const isPasswordValid = passwordRegex.test(password);
+      displayError('passwordError', isPasswordValid, 'Wrong password');
+
+      const isRepeatPasswordValid = password === repeatPassword;
+      displayError('repeatPasswordError', isRepeatPasswordValid, 'Password must match');
+
+      if (isEmailValid && isPasswordValid && isRepeatPasswordValid) {
+        const expirationDate = new Date();
+        expirationDate.setHours(expirationDate.getHours() + 1);
+
+        document.cookie=`email=${email}; expires=${expirationDate.toUTCString()}; path=/`;
+        document.cookie=`password=${password}; expires=${expirationDate.toUTCString()}; path=/`;
+
+        window.location.href = 'user_info.html'
+      }
+    }
+
+    function displayError(errorId, isValid, errorMessage) {
+      const errorElement = document.getElementById(errorId);
+      errorElement.textContent = isValid ? '' : errorMessage;
+    }
+
+  </script>
+</body>
+</html>
